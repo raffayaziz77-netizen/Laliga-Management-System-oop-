@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace LaLigaSystem.Models
 {
     public class Team
@@ -12,9 +6,12 @@ namespace LaLigaSystem.Models
         public string Name { get; set; }
         public int Points { get; set; }
         public int MatchesPlayed { get; set; }
+        public int Wins { get; set; }
+        public int Draws { get; set; }
+        public int Losses { get; set; }
         public int GoalsFor { get; set; }
         public int GoalsAgainst { get; set; }
-        public int GoalDifference => GoalsFor - GoalsAgainst;
+        public int GoalDifference { get { return GoalsFor - GoalsAgainst; } }
 
         public Team(int id, string name)
         {
@@ -22,6 +19,10 @@ namespace LaLigaSystem.Models
             Name = name;
         }
 
-        public override string ToString() => $"{Id},{Name},{Points},{MatchesPlayed},{GoalsFor},{GoalsAgainst}";
+        // Keep the original six-column file format readable in TeamRepository.
+        public override string ToString()
+        {
+            return string.Join(",", Id, Name, Points, MatchesPlayed, Wins, Draws, Losses, GoalsFor, GoalsAgainst);
+        }
     }
 }
