@@ -18,18 +18,16 @@ namespace LaLigaSystem
 
             // Initialize each data file independently so one missing file does not
             // cause existing season data in the other files to be overwritten.
-            if (!HasData(Constants.TeamsFile))
-                SeedTeams(teamRepo);
-
-            if (!HasData(Constants.PlayersFile))
-                SeedPlayers(playerRepo);
-
-            if (!HasData(Constants.MatchesFile))
-                SeedMatches(matchRepo, teamRepo.LoadAll());
+            if (!HasData(Constants.TeamsFile)) SeedTeams(teamRepo);
+            if (!HasData(Constants.PlayersFile)) SeedPlayers(playerRepo);
+            if (!HasData(Constants.MatchesFile)) SeedMatches(matchRepo, teamRepo.LoadAll());
 
             var teamService = new TeamService(teamRepo);
             var playerService = new PlayerService(playerRepo);
             var matchService = new MatchService(matchRepo, teamService);
+
+            // Populate W/D/L when opening a season created by the older file format.
+            teamService.RebuildWinDrawLoss(matchRepo.LoadAll());
 
             var teamUI = new TeamManagementUI(teamService, playerService);
             var matchUI = new MatchExecutionUI(matchService);
@@ -52,7 +50,6 @@ namespace LaLigaSystem
                 new Team(7, "Real Betis"), new Team(8, "Athletic Club"),
                 new Team(9, "Valencia"), new Team(10, "Osasuna")
             };
-
             repository.SaveAll(teams);
         }
 
@@ -76,7 +73,6 @@ namespace LaLigaSystem
             players[14].Name = "Robert Lewandowski";
             players[15].Name = "Thibaut Courtois";
             players[29].Name = "Vinicius Junior";
-
             repository.SaveAll(players);
         }
 
@@ -84,11 +80,9 @@ namespace LaLigaSystem
         {
             var matches = new List<Match>();
             int matchId = 1;
-
             for (int i = 0; i < teams.Count - 1; i++)
                 for (int j = i + 1; j < teams.Count; j++)
                     matches.Add(new Match(matchId++, teams[i].Id, teams[j].Id));
-
             repository.SaveAll(matches);
         }
     }
