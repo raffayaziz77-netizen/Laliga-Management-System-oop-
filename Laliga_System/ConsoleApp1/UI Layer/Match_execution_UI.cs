@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using LaLigaSystem.Logic;
+using LaLigaSystem.Common;
 
 namespace LaLigaSystem.UI
 {
@@ -11,10 +8,7 @@ namespace LaLigaSystem.UI
     {
         private readonly MatchService _matchService;
 
-        public MatchExecutionUI(MatchService matchService)
-        {
-            _matchService = matchService;
-        }
+        public MatchExecutionUI(MatchService matchService) { _matchService = matchService; }
 
         public void ShowMenu()
         {
@@ -29,6 +23,11 @@ namespace LaLigaSystem.UI
                 string choice = Console.ReadLine();
                 if (choice == "1") PlayMatch();
                 else if (choice == "2") return;
+                else
+                {
+                    Console.WriteLine("Invalid option. Press Enter to continue.");
+                    Console.ReadLine();
+                }
             }
         }
 
@@ -39,10 +38,15 @@ namespace LaLigaSystem.UI
                 _matchService.PlayNextMatch();
                 Console.WriteLine("Match simulated successfully. Standings updated.");
             }
+            catch (LeagueException ex)
+            {
+                Console.WriteLine("Unable to play match: " + ex.Message);
+            }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.WriteLine("An unexpected error occurred: " + ex.Message);
             }
+            Console.WriteLine("Press Enter to continue.");
             Console.ReadLine();
         }
     }
