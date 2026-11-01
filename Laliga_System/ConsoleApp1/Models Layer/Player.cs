@@ -1,3 +1,5 @@
+using LaLigaSystem.Common;
+
 namespace LaLigaSystem.Models
 {
     public class Player
