@@ -1,9 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace LaLigaSystem.Models
 {
     public class Player
@@ -11,11 +5,11 @@ namespace LaLigaSystem.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int TeamId { get; set; }
-        public string Position { get; set; }
+        public PlayerPosition Position { get; set; }
         public int Goals { get; set; }
         public int Assists { get; set; }
 
-        public Player(int id, string name, int teamId, string position)
+        public Player(int id, string name, int teamId, PlayerPosition position)
         {
             Id = id;
             Name = name;
@@ -23,6 +17,9 @@ namespace LaLigaSystem.Models
             Position = position;
         }
 
-        public override string ToString() => $"{Id},{Name},{TeamId},{Position},{Goals},{Assists}";
+        public override string ToString()
+        {
+            return string.Join(",", Id, Name, TeamId, Position, Goals, Assists);
+        }
     }
 }
