@@ -1,59 +1,75 @@
 ﻿using System;
+using LaLigaApp.DAL;
+using LaLigaApp.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LaLigaSystem.DAL;
-using LaLigaSystem.Models;
 
-namespace LaLigaSystem.Logic
+namespace LaLigaApp.Logic
 {
-    public class MatchService
+    public class match_service
     {
-        private readonly MatchRepository _matchRepo;
-        private readonly TeamService _teamService;
+        private readonly Match_Repo _matchRepo = new Match_Repo();
+        private readonly Team_Repo _teamRepo = new Team_Repo();
 
-        public MatchService(MatchRepository matchRepo, TeamService teamService)
+        public List<Match> GetAllMatches()
         {
-            _matchRepo = matchRepo;
-            _teamService = teamService;
+            return _matchRepo.GetAllMatches();
         }
 
-        public List<Match> GetAllMatches() => _matchRepo.LoadAll();
-
-        public void PlayNextMatch()
+        public void DeleteMatch(int id)
         {
-            var matches = _matchRepo.LoadAll();
-            var nextMatch = matches.FirstOrDefault(m => !m.IsPlayed);
-            if (nextMatch == null) throw new Exception("All matches have been played.");
-
-            Random rng = new Random();
-            nextMatch.HomeScore = rng.Next(0, 5);
-            nextMatch.AwayScore = rng.Next(0, 5);
-            nextMatch.IsPlayed = true;
-
-            UpdateTeamStats(nextMatch);
-            _matchRepo.SaveAll(matches);
+            var matches = _matchRepo.GetAllMatches();
+            if (!matches.Exists(m => m.Id == id))
+            {
+                Console.WriteLine("Match not found.");
+                return;
+            }
+            _matchRepo.DeleteMatch(id);
+            Console.WriteLine("Match deleted successfully. (Note: League points were not reverted)");
         }
-
-        private void UpdateTeamStats(Match match)
+        public void RecordMatch(int homeTeamId, int awayTeamId, int homeGoals, int awayGoals)
         {
-            var teams = _teamService.GetStandings();
-            var home = teams.First(t => t.Id == match.HomeTeamId);
-            var away = teams.First(t => t.Id == match.AwayTeamId);
+            if (homeTeamId == awayTeamId)
+            {
+                Console.WriteLine("A team cannot play a match against itself.");
+                return;
+            }
 
-            home.MatchesPlayed++;
-            away.MatchesPlayed++;
-            home.GoalsFor += match.HomeScore;
-            home.GoalsAgainst += match.AwayScore;
-            away.GoalsFor += match.AwayScore;
-            away.GoalsAgainst += match.HomeScore;
+            var teams = _teamRepo.GetAllTeams();
+            var homeTeam = teams.Find(t => t.Id == homeTeamId);
+            var awayTeam = teams.Find(t => t.Id == awayTeamId);
 
-            if (match.HomeScore > match.AwayScore) home.Points += 3;
-            else if (match.AwayScore > match.HomeScore) away.Points += 3;
-            else { home.Points += 1; away.Points += 1; }
+            if (homeTeam == null || awayTeam == null)
+            {
+                Console.WriteLine("Error: One or both teams could not be found.");
+                return;
+            }
 
-            _teamService.UpdateTeams(teams);
+            Match newMatch = new Match
+            {
+                HomeTeamId = homeTeamId,
+                AwayTeamId = awayTeamId,
+                HomeGoals = homeGoals,
+                AwayGoals = awayGoals
+            };
+
+            _matchRepo.AddMatch(newMatch);
+
+            if (homeGoals > awayGoals)
+            {
+                homeTeam.Points += 3;
+            }
+            else if (awayGoals > homeGoals)
+            {
+                awayTeam.Points += 3;
+            }
+            else
+            {
+                homeTeam.Points += 1;
+                awayTeam.Points += 1;
+            }
+
+            _teamRepo.SaveAllTeams(teams);
+            Console.WriteLine("Match recorded and league standings updated successfully.");
         }
     }
 }

@@ -1,40 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using LaLigaSystem.Models;
-using LaLigaSystem.Common;
+using LaLigaApp.Models;
 
-namespace LaLigaSystem.DAL
+namespace LaLigaApp.DAL
 {
-    public class MatchRepository
+    public class Match_Repo
     {
-        public void SaveAll(List<Match> matches)
+        private readonly string filePath = "matches.txt";
+
+        public void DeleteMatch(int id)
         {
-            using (StreamWriter sw = new StreamWriter(Constants.MatchesFile, false))
+            var matches = GetAllMatches();
+            var matchToRemove = matches.Find(m => m.Id == id);
+            if (matchToRemove != null)
             {
-                foreach (var m in matches) sw.WriteLine(m.ToString());
+                matches.Remove(matchToRemove);
+                SaveAllMatches(matches);
+            }
+        }
+        public List<Match> GetAllMatches()
+        {
+            List<Match> matches = new List<Match>();
+            if (!File.Exists(filePath)) return matches;
+
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string[] parts = line.Split(',');
+                    if (parts.Length == 5)
+                    {
+                        matches.Add(new Match
+                        {
+                            Id = int.Parse(parts[0]),
+                            HomeTeamId = int.Parse(parts[1]),
+                            AwayTeamId = int.Parse(parts[2]),
+                            HomeGoals = int.Parse(parts[3]),
+                            AwayGoals = int.Parse(parts[4])
+                        });
+                    }
+                }
+            }
+            return matches;
+        }
+
+        public void SaveAllMatches(List<Match> matches)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, false))
+            {
+                foreach (var match in matches)
+                {
+                    writer.WriteLine($"{match.Id},{match.HomeTeamId},{match.AwayTeamId},{match.HomeGoals},{match.AwayGoals}");
+                }
             }
         }
 
-        public List<Match> LoadAll()
+        public void AddMatch(Match match)
         {
-            var matches = new List<Match>();
-            if (!File.Exists(Constants.MatchesFile)) return matches;
-
-            foreach (var line in File.ReadAllLines(Constants.MatchesFile))
-            {
-                var data = line.Split(',');
-                matches.Add(new Match(int.Parse(data[0]), int.Parse(data[1]), int.Parse(data[2]))
-                {
-                    HomeScore = int.Parse(data[3]),
-                    AwayScore = int.Parse(data[4]),
-                    IsPlayed = bool.Parse(data[5])
-                });
-            }
-            return matches;
+            var matches = GetAllMatches();
+            match.Id = matches.Count > 0 ? matches[matches.Count - 1].Id + 1 : 1;
+            matches.Add(match);
+            SaveAllMatches(matches);
         }
     }
 }

@@ -5,3 +5,10 @@ C:\Users\Dell\Downloads\oop\ConsoleApp1\ConsoleApp1\obj\Debug\LaligaSystem.cspro
 C:\Users\Dell\Downloads\oop\ConsoleApp1\ConsoleApp1\obj\Debug\LaligaSystem.csproj.CoreCompileInputs.cache
 C:\Users\Dell\Downloads\oop\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.exe
 C:\Users\Dell\Downloads\oop\ConsoleApp1\ConsoleApp1\obj\Debug\ConsoleApp1.pdb
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\bin\Debug\ConsoleApp1.exe.config
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\bin\Debug\ConsoleApp1.exe
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\bin\Debug\ConsoleApp1.pdb
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\obj\Debug\LaligaSystem.csproj.AssemblyReference.cache
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\obj\Debug\LaligaSystem.csproj.CoreCompileInputs.cache
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\obj\Debug\ConsoleApp1.exe
+C:\Users\Dell\Downloads\OOP_project\Laliga_System\ConsoleApp1\obj\Debug\ConsoleApp1.pdb

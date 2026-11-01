@@ -1,26 +1,56 @@
 ﻿using System;
+using LaLigaApp.DAL;
+using LaLigaApp.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LaLigaSystem.DAL;
-using LaLigaSystem.Models;
 
-namespace LaLigaSystem.Logic
+namespace LaLigaApp.Logic
 {
-    public class PlayerService
+    public class player_service
     {
-        private readonly PlayerRepository _playerRepo;
-        public PlayerService(PlayerRepository playerRepo) { _playerRepo = playerRepo; }
+        private readonly Player_Repo _playerRepo = new Player_Repo();
+        private readonly Team_Repo _teamRepo = new Team_Repo();
 
-        public List<Player> GetPlayersByTeam(int teamId)
+        public List<Player> GetAllPlayers()
         {
-            return _playerRepo.LoadAll().Where(p => p.TeamId == teamId).ToList();
+            return _playerRepo.GetAllPlayers();
         }
 
-        public Player SearchPlayerByName(string name)
+        public void DeletePlayer(int id)
         {
-            return _playerRepo.LoadAll().FirstOrDefault(p => p.Name.ToLower().Contains(name.ToLower()));
+            var players = _playerRepo.GetAllPlayers();
+            if (!players.Exists(p => p.Id == id))
+            {
+                Console.WriteLine("Player not found.");
+                return;
+            }
+            _playerRepo.DeletePlayer(id);
+            Console.WriteLine("Player deleted successfully.");
         }
+        public void AddPlayer(string name, string position, int teamId)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                Console.WriteLine("Player name cannot be empty.");
+                return;
+            }
+
+            var teams = _teamRepo.GetAllTeams();
+            if (!teams.Exists(t => t.Id == teamId))
+            {
+                Console.WriteLine("Error: Team ID does not exist.");
+                return;
+            }
+
+            Player newPlayer = new Player
+            {
+                Name = name,
+                Position = position,
+                TeamId = teamId
+            };
+
+            _playerRepo.AddPlayer(newPlayer);
+            Console.WriteLine("Player registered successfully.");
+        }
+        
     }
 }

@@ -1,41 +1,67 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LaLigaSystem.Models;
-using LaLigaSystem.Common;
 using System.IO;
+using LaLigaApp.Models;
 
-namespace LaLigaSystem.DAL
+namespace LaLigaApp.DAL
 {
-    public class TeamRepository
+    public class Team_Repo
     {
-        public void SaveAll(List<Team> teams)
+        private readonly string filePath = "teams.txt";
+
+        public void DeleteTeam(int id)
         {
-            using (StreamWriter sw = new StreamWriter(Constants.TeamsFile, false))
+            var teams = GetAllTeams();
+            var teamToRemove = teams.Find(t => t.Id == id);
+            if (teamToRemove != null)
             {
-                foreach (var t in teams) sw.WriteLine(t.ToString());
+                teams.Remove(teamToRemove);
+                SaveAllTeams(teams); // Overwrites the text file with the updated list
             }
         }
 
-        public List<Team> LoadAll()
+        public List<Team> GetAllTeams()
         {
-            var teams = new List<Team>();
-            if (!File.Exists(Constants.TeamsFile)) return teams;
+            List<Team> teams = new List<Team>();
+            if (!File.Exists(filePath)) return teams;
 
-            foreach (var line in File.ReadAllLines(Constants.TeamsFile))
+            using (StreamReader reader = new StreamReader(filePath))
             {
-                var data = line.Split(',');
-                teams.Add(new Team(int.Parse(data[0]), data[1])
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    Points = int.Parse(data[2]),
-                    MatchesPlayed = int.Parse(data[3]),
-                    GoalsFor = int.Parse(data[4]),
-                    GoalsAgainst = int.Parse(data[5])
-                });
+                    string[] parts = line.Split(',');
+                    if (parts.Length == 3)
+                    {
+                        teams.Add(new Team
+                        {
+                            Id = int.Parse(parts[0]),
+                            Name = parts[1],
+                            Points = int.Parse(parts[2])
+                        });
+                    }
+                }
             }
             return teams;
+        }
+
+        public void SaveAllTeams(List<Team> teams)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath, false))
+            {
+                foreach (var team in teams)
+                {
+                    writer.WriteLine($"{team.Id},{team.Name},{team.Points}");
+                }
+            }
+        }
+
+        public void AddTeam(Team team)
+        {
+            var teams = GetAllTeams();
+            team.Id = teams.Count > 0 ? teams[teams.Count - 1].Id + 1 : 1;
+            teams.Add(team);
+            SaveAllTeams(teams);
         }
     }
 }

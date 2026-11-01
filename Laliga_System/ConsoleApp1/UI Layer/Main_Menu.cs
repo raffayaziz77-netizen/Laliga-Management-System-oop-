@@ -1,36 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-namespace LaLigaSystem.UI
+
+namespace LaLigaApp.UI
 {
-    public class MainMenuUI
+    public class Main_Menu
     {
-        private readonly TeamManagementUI _teamUI;
-        private readonly MatchExecutionUI _matchUI;
+        private readonly Team_management_UI _teamUI = new Team_management_UI();
+        private readonly Player_management_UI _playerUI = new Player_management_UI();
+        private readonly Match_execution_UI _matchUI = new Match_execution_UI();
 
-        public MainMenuUI(TeamManagementUI teamUI, MatchExecutionUI matchUI)
-        {
-            _teamUI = teamUI;
-            _matchUI = matchUI;
-        }
-
-        public void ShowMenu()
+        public void Start()
         {
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("=== LaLiga Management System ===");
-                Console.WriteLine("1. Team & Player Management");
-                Console.WriteLine("2. Match Execution");
-                Console.WriteLine("3. Exit");
+                Console.WriteLine("\n=== LaLiga Management System ===");
+                Console.WriteLine("1. Manage Teams");
+                Console.WriteLine("2. Manage Players");
+                Console.WriteLine("3. Match Execution & History");
+                Console.WriteLine("4. Exit");
                 Console.Write("Select an option: ");
 
                 string choice = Console.ReadLine();
-                if (choice == "1") _teamUI.ShowMenu();
-                else if (choice == "2") _matchUI.ShowMenu();
-                else if (choice == "3") return;
+
+                switch (choice)
+                {
+                    case "1":
+                        _teamUI.ShowMenu();
+                        break;
+                    case "2":
+                        _playerUI.ShowMenu();
+                        break;
+                    case "3":
+                        _matchUI.ShowMenu();
+                        break;
+                    case "4":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid choice. Try again.");
+                        break;
+                }
             }
         }
     }
