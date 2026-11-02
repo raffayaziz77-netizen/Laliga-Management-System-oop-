@@ -63,5 +63,14 @@ namespace LaLigaApp.DAL
             teams.Add(team);
             SaveAllTeams(teams);
         }
+        public Team GetTeamByName(string name)
+        {
+            var players = GetAllTeams();
+
+            return players.Find(p =>
+                p.Name.Equals(name,
+                StringComparison.OrdinalIgnoreCase));
+        }
     }
 }
+

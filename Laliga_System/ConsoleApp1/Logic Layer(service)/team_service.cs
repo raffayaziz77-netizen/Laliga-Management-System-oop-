@@ -45,5 +45,27 @@ namespace LaLigaApp.Logic
             teams.Sort((t1, t2) => t2.Points.CompareTo(t1.Points));
             return teams;
         }
+        public Team SearchTeam(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            return _teamRepo.GetTeamByName(name);
+        }
+        public List<Team> SearchTeamByLetters(string letters)
+        {
+            var Teams = _teamRepo.GetAllTeams();
+
+            return Teams.FindAll(p =>
+            p.Name.IndexOf(letters,
+            StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+        public List<Team> SearchByPoints(int n1,int n2)
+        {
+            var Teams = _teamRepo.GetAllTeams();
+
+            return Teams.FindAll(t =>
+            t.Points > n1 && t.Points < n2);
+        }
     }
 }

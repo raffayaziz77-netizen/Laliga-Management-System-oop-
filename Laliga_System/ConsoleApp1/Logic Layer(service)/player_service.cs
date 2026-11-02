@@ -26,6 +26,23 @@ namespace LaLigaApp.Logic
             _playerRepo.DeletePlayer(id);
             Console.WriteLine("Player deleted successfully.");
         }
+        public Player SearchPlayer(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            return _playerRepo.GetPlayerByName(name);
+        }
+
+        public List<Player> SearchPlayerByLetters(string letters)
+        {
+            var players = _playerRepo.GetAllPlayers();
+
+            return players.FindAll(p =>
+            p.Name.IndexOf(letters,
+            StringComparison.OrdinalIgnoreCase) >= 0);
+        }
+
         public void AddPlayer(string name, string position, int teamId)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -51,6 +68,5 @@ namespace LaLigaApp.Logic
             _playerRepo.AddPlayer(newPlayer);
             Console.WriteLine("Player registered successfully.");
         }
-        
     }
 }

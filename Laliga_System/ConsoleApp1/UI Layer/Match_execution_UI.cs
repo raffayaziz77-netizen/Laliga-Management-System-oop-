@@ -17,7 +17,7 @@ namespace LaLigaApp.UI
             Console.Write("Select an option: ");
 
             string choice = Console.ReadLine();
-
+            
             if (choice == "1")
             {
                 Console.Write("Enter Home Team ID: ");
@@ -28,7 +28,7 @@ namespace LaLigaApp.UI
                 if (!int.TryParse(Console.ReadLine(), out int homeGoals)) return;
                 Console.Write("Enter Away Goals: ");
                 if (!int.TryParse(Console.ReadLine(), out int awayGoals)) return;
-
+                 
                 _matchService.RecordMatch(homeId, awayId, homeGoals, awayGoals);
             }
             else if (choice == "2")

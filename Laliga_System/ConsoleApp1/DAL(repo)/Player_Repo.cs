@@ -63,5 +63,16 @@ namespace LaLigaApp.DAL
             players.Add(player);
             SaveAllPlayers(players);
         }
+
+        public Player GetPlayerByName(string name)
+        {
+            var players = GetAllPlayers();
+
+            return players.Find(p =>
+                p.Name.Equals(name,
+                StringComparison.OrdinalIgnoreCase));
+        }
+
+
     }
 }
